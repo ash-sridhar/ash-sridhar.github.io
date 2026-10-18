@@ -176,6 +176,7 @@
   const person = model.person;
   $('#email-link').href = 'mailto:' + person.email;
   $('#linkedin-link').href = person.linkedin;
+  if($('#email-text')) $('#email-text').textContent = person.email;
   $$('.header-resume,.resume-actions a,.resume-fallback a').forEach(a => {
     if(a.getAttribute('href')?.includes('Resume.pdf')) a.href = person.resume;
   });
