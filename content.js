@@ -1,7 +1,7 @@
 /*
   EDIT THIS FILE TO UPDATE YOUR SITE.
   To add a project, duplicate one object inside `projects`, assign a unique id,
-  change its text, and point `image` to an SVG / PNG / JPG under assets/.
+  change its text, and point `image` to an SVG / PNG / JPG under .
   No HTML or CSS changes required.
 */
 window.PORTFOLIO = {
@@ -15,7 +15,7 @@ window.PORTFOLIO = {
     gpa: '4.0',
     email: 'ashwathsridhar7@gmail.com',
     linkedin: 'https://www.linkedin.com/in/ashwath-sridhar1/',
-    resume: 'assets/Ashwath_Sridhar_Resume.pdf'
+    resume: 'Ashwath_Sridhar_Resume.pdf'
   },
   filters: [
     { id: 'all', label: 'All work' },
@@ -32,7 +32,7 @@ window.PORTFOLIO = {
       eyebrow: 'Analog / mixed-signal',
       category: 'ic',
       featured: true,
-      image: 'assets/vco-layout.webp',
+      image: 'vco-layout.webp',
       imageAlt: 'Cadence Virtuoso full-custom layout of the five-stage VCO and its six-stage buffer, from my design review',
       period: '2026 · SiliconJackets',
       tags: ['SKY130', 'Cadence Virtuoso', 'Analog IC', 'Verification'],
@@ -44,12 +44,12 @@ window.PORTFOLIO = {
       outcome: 'At the tt process corner, the simulated oscillator covered 451.2–549.6 MHz from 0–70 °C, within the stated specification. The same review measured 51.01–51.66% duty cycle, 202.2–205.7 ps rise time, and 37.6–47.5 µW of ring-only power. Separate 27 °C process-corner checks found approximately 704.8 MHz at ff and 314.9 MHz at ss; those corners were characterized, not claimed to meet the tt temperature specification. I completed full-custom layout with multi-finger devices and guard rings, achieving zero DRC violations and a clean LVS match in Cadence Pegasus before documenting the design review.',
       takeaway: 'The most important lesson was that analog design is iterative. A circuit can satisfy the nominal target and still fail once device behavior changes with temperature. Tracing a drift mechanism back to device physics was more valuable than just tuning parameters until the plot looked right.',
       gallery: [
-        { image: 'assets/vco-layout.webp', alt: 'The full custom VCO and tapered-buffer layout in Cadence Virtuoso', caption: 'Full-custom layout: VCO at left, six-stage buffer at right' },
-        { image: 'assets/vco-schematics.webp', alt: 'Current-starved oscillator and buffer schematics', caption: 'Five-stage ring, output buffer, and testbench schematics' },
-        { image: 'assets/vco-temp-graph.webp', alt: 'Cadence temperature sweep graph from 451.2 to 549.6 MHz', caption: 'Simulated frequency over 0–70 °C at the tt corner' },
-        { image: 'assets/vco-waveforms.webp', alt: 'Transient waveforms across three process corners and measured specifications', caption: 'Transient and verification results from the design review' },
-        { image: 'assets/vco-drc.webp', alt: 'Pegasus DRC report with zero violations', caption: 'Physical verification: zero DRC violations' },
-        { image: 'assets/vco-lvs.webp', alt: 'Layout versus schematic report showing a match', caption: 'LVS: extracted layout matches the schematic' }
+        { image: 'vco-layout.webp', alt: 'The full custom VCO and tapered-buffer layout in Cadence Virtuoso', caption: 'Full-custom layout: VCO at left, six-stage buffer at right' },
+        { image: 'vco-schematics.webp', alt: 'Current-starved oscillator and buffer schematics', caption: 'Five-stage ring, output buffer, and testbench schematics' },
+        { image: 'vco-temp-graph.webp', alt: 'Cadence temperature sweep graph from 451.2 to 549.6 MHz', caption: 'Simulated frequency over 0–70 °C at the tt corner' },
+        { image: 'vco-waveforms.webp', alt: 'Transient waveforms across three process corners and measured specifications', caption: 'Transient and verification results from the design review' },
+        { image: 'vco-drc.webp', alt: 'Pegasus DRC report with zero violations', caption: 'Physical verification: zero DRC violations' },
+        { image: 'vco-lvs.webp', alt: 'Layout versus schematic report showing a match', caption: 'LVS: extracted layout matches the schematic' }
       ],
       specs: [
         ['Oscillation / 0–70 °C, tt', '451.2–549.6 MHz'],
@@ -58,7 +58,7 @@ window.PORTFOLIO = {
         ['Ring power', '37.6–47.5 µW'],
         ['Top-level DRC / LVS', '0 violations / Match']
       ],
-      resource: { url: 'assets/Ring_Oscillator_Final.pdf', label: 'View original VCO design-review slides (PDF)' }
+      resource: { url: 'Ring_Oscillator_Final.pdf', label: 'View original VCO design-review slides (PDF)' }
     },
     {
       id: 'buffer',
@@ -67,7 +67,7 @@ window.PORTFOLIO = {
       eyebrow: 'Custom layout / verification',
       category: 'ic',
       featured: false,
-      image: 'assets/vco-schematics.webp',
+      image: 'vco-schematics.webp',
       imageAlt: 'Actual Cadence Virtuoso design-review slide showing oscillator and output buffer schematics',
       period: '2026 · SiliconJackets',
       tags: ['CMOS', 'Layout', 'DRC / LVS', 'Cadence'],
@@ -86,7 +86,7 @@ window.PORTFOLIO = {
       eyebrow: 'Test engineering / Python',
       category: 'testing',
       featured: true,
-      image: 'assets/automation.svg',
+      image: 'automation.svg',
       imageAlt: 'Original conceptual oscilloscope sweep graphic with a grid of measurements',
       period: 'Summer 2026 · huMannity Medtec',
       tags: ['Python', 'Oscilloscope', 'GUI', 'Hardware Test'],
@@ -105,7 +105,7 @@ window.PORTFOLIO = {
       eyebrow: 'Circuit design / debug',
       category: 'testing',
       featured: false,
-      image: 'assets/switching.svg',
+      image: 'switching.svg',
       imageAlt: 'Original conceptual circuit illustration showing switching transients and signal pulses',
       period: 'Summer 2026 · huMannity Medtec',
       tags: ['Circuit Validation', 'Oscilloscope', 'ECG', 'Debugging'],
@@ -124,7 +124,7 @@ window.PORTFOLIO = {
       eyebrow: 'PCB design / prototyping',
       category: 'embedded',
       featured: true,
-      image: 'assets/keychain-3d-render.webp',
+      image: 'keychain-3d-render.webp',
       imageAlt: 'My Altium 3D rendering of the HyTech logo-shaped keychain PCB',
       period: '2026 · HyTech Racing',
       tags: ['Altium Designer', 'LM555', 'PCB Layout', 'Soldering'],
@@ -136,11 +136,11 @@ window.PORTFOLIO = {
       outcome: 'The final PCB was DRC-clean and hardware-verified. The most useful part of the process was learning to connect datasheet details to the physical design decisions that determine whether a board can actually be assembled and operated.',
       takeaway: 'A schematic is only one representation of a product. Library accuracy, footprint orientation, connector details, manufacturing rules, and board-level validation are just as important as the circuit concept.',
       gallery: [
-        { image: 'assets/keychain-3d-render.webp', alt: 'My Altium 3D rendering of the keychain PCB', caption: '3D PCB model and custom HyTech-inspired board outline' },
-        { image: 'assets/keychain-timer-schematic.webp', alt: 'LM555 timer schematic with R1 100 kΩ, R2 13 kΩ and C2 2.2 µF', caption: 'LM555 astable oscillator schematic' },
-        { image: 'assets/keychain-usbc-led-schematic.webp', alt: 'USB-C input and six-LED output schematic', caption: 'USB-C power input and LED output circuitry' },
-        { image: 'assets/keychain-pcb-top.webp', alt: 'Top-layer routing of the keychain board in Altium', caption: 'Top copper routing and ground plane' },
-        { image: 'assets/keychain-pcb-bottom.webp', alt: 'Bottom-layer copper view in Altium', caption: 'Bottom copper routing and ground plane' }
+        { image: 'keychain-3d-render.webp', alt: 'My Altium 3D rendering of the keychain PCB', caption: '3D PCB model and custom HyTech-inspired board outline' },
+        { image: 'keychain-timer-schematic.webp', alt: 'LM555 timer schematic with R1 100 kΩ, R2 13 kΩ and C2 2.2 µF', caption: 'LM555 astable oscillator schematic' },
+        { image: 'keychain-usbc-led-schematic.webp', alt: 'USB-C input and six-LED output schematic', caption: 'USB-C power input and LED output circuitry' },
+        { image: 'keychain-pcb-top.webp', alt: 'Top-layer routing of the keychain board in Altium', caption: 'Top copper routing and ground plane' },
+        { image: 'keychain-pcb-bottom.webp', alt: 'Bottom-layer copper view in Altium', caption: 'Bottom copper routing and ground plane' }
       ]
     },
     {
@@ -150,7 +150,7 @@ window.PORTFOLIO = {
       eyebrow: 'Embedded systems',
       category: 'embedded',
       featured: false,
-      image: 'assets/firmware.svg',
+      image: 'firmware.svg',
       imageAlt: 'Original conceptual diagram of an Arduino and BME280 sensor with serial data paths',
       period: '2026 · HyTech Racing',
       tags: ['C++', 'Arduino', 'BME280', 'I²C / SPI'],
@@ -169,7 +169,7 @@ window.PORTFOLIO = {
       eyebrow: 'Leadership / controls software',
       category: 'robotics',
       featured: false,
-      image: 'assets/robotics.svg',
+      image: 'robotics.svg',
       imageAlt: 'Original conceptual robot chassis and computer-vision target illustration',
       period: '2022–2025 · FIRST Robotics',
       tags: ['Java', 'Computer Vision', 'Controls', 'Mentoring'],
@@ -186,7 +186,7 @@ window.PORTFOLIO = {
     title: 'HyTech Racing · Flashing Keychain PCB',
     status: 'Complete case study',
     summary: 'For my ECE 1100 Individual Discovery Project, I designed and validated a two-layer, USB-C-powered LED keychain based on HyTech Racing’s Ready-to-Move indicator. The project brought together datasheet research, 555 timer design, custom CAD libraries, schematic capture, PCB routing, and hardware verification.',
-    image: 'assets/keychain-3d-render.webp',
+    image: 'keychain-3d-render.webp',
     imageAlt: '3D PCB rendering I created in Altium Designer for the HyTech Racing keychain project',
     sections: [
       {
@@ -211,11 +211,11 @@ window.PORTFOLIO = {
       }
     ],
     gallery: [
-      { image: 'assets/keychain-3d-render.webp', alt: 'Altium 3D board rendering created for my keychain', caption: '3D design of the keychain PCB' },
-      { image: 'assets/keychain-timer-schematic.webp', alt: '555 timer schematic used in the keychain project', caption: 'LM555 oscillator with timing resistor/capacitor values' },
-      { image: 'assets/keychain-usbc-led-schematic.webp', alt: 'USB-C power and LED array schematic', caption: 'USB-C power and six 0603 LEDs' },
-      { image: 'assets/keychain-pcb-top.webp', alt: 'Routed top PCB layer designed in Altium', caption: 'Top-layer layout and traces' },
-      { image: 'assets/keychain-pcb-bottom.webp', alt: 'Routed bottom PCB layer designed in Altium', caption: 'Bottom-layer layout and copper fills' }
+      { image: 'keychain-3d-render.webp', alt: 'Altium 3D board rendering created for my keychain', caption: '3D design of the keychain PCB' },
+      { image: 'keychain-timer-schematic.webp', alt: '555 timer schematic used in the keychain project', caption: 'LM555 oscillator with timing resistor/capacitor values' },
+      { image: 'keychain-usbc-led-schematic.webp', alt: 'USB-C power and LED array schematic', caption: 'USB-C power and six 0603 LEDs' },
+      { image: 'keychain-pcb-top.webp', alt: 'Routed top PCB layer designed in Altium', caption: 'Top-layer layout and traces' },
+      { image: 'keychain-pcb-bottom.webp', alt: 'Routed bottom PCB layer designed in Altium', caption: 'Bottom-layer layout and copper fills' }
     ]
   }
 };
