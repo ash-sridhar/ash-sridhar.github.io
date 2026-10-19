@@ -69,7 +69,7 @@ window.PORTFOLIO = {
       image: 'switching-clean.png',
       imageAlt: 'Switching network diagram used as a project visual',
       period: 'Summer 2026 · huMannity Medtec',
-      tags: ['H-Bridge', 'Oscilloscope', 'Circuit Debugging', 'Validation'],
+      tags: ['Switching Circuits', 'Oscilloscope', 'Circuit Debugging', 'Validation'],
       metric: '>98%',
       metricLabel: 'timing accuracy',
       teaser: 'Traced unexpected pulse behavior to a schematic error, corrected the design, and verified greater than 98% timing accuracy with oscilloscope measurements.',
