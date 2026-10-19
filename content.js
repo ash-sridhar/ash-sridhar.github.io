@@ -104,7 +104,7 @@ window.PORTFOLIO = {
       eyebrow: 'Test engineering / Python',
       category: 'testing',
       featured: false,
-      image: 'automation.svg',
+      image: 'automation.svg?v=20261018-v9',
       imageAlt: 'Concept illustration of an automated measurement sweep and a custom GUI controller',
       period: 'Summer 2026 · huMannity Medtec',
       tags: ['Python', 'Oscilloscope', 'GUI', 'Hardware Test'],
