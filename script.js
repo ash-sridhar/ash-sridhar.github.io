@@ -71,6 +71,17 @@
       <p class="evidence-intro">Actual CAD screenshots and presentation slides from this project. Select an image to view it full size.</p>
       <div class="evidence-grid">${gallery.map(g => `<a class="evidence-item" href="${escapeHTML(g.image)}" target="_blank" rel="noopener" aria-label="Open full-size image: ${escapeHTML(g.alt)}"><figure><img src="${escapeHTML(g.image)}" alt="${escapeHTML(g.alt)}" loading="lazy"><figcaption>${escapeHTML(g.caption)}</figcaption></figure></a>`).join('')}</div></section>`;
   }
+  // Native HTML5 video for an original hardware demo (no external video host).
+  function projectVideo(video) {
+    if(!video?.src) return '';
+    return `<section class="project-video" aria-label="Original project video">
+      <h3>Physical prototype / video</h3>
+      <video controls playsinline preload="metadata" poster="${escapeHTML(video.poster || '')}">
+        <source src="${escapeHTML(video.src)}" type="video/mp4">
+        Your browser cannot play the embedded video. <a href="${escapeHTML(video.src)}">Open the video directly.</a>
+      </video>
+      <p>${escapeHTML(video.caption || 'Original project video')}</p></section>`;
+  }
   function specsTable(specs) {
     if(!Array.isArray(specs) || !specs.length) return '';
     return `<section class="project-specs"><h3>Measured / verified results</h3><table class="specs-table"><tbody>${specs.map(([label,value])=>`<tr><td>${escapeHTML(label)}</td><td>${escapeHTML(value)}</td></tr>`).join('')}</tbody></table></section>`;
@@ -91,6 +102,7 @@
       ${sections.map(([heading, text]) => `<article><h3>${escapeHTML(heading)}</h3><p>${escapeHTML(text)}</p></article>`).join('')}
       ${specsTable(p.specs)}
       ${evidenceGallery(p.gallery)}
+      ${projectVideo(p.video)}
       ${resourceLink(p.resource)}
       <div class="dialog-disclaimer">${p.gallery?.length ? 'Gallery images are from the project design files or presentation. Any oscillator values shown are simulated results, not measurements from fabricated silicon.' : 'Project header art is an original conceptual vector illustration. Technical figures are based on my project documentation and resume.'}</div></div>`;
     if (typeof dialog.showModal === 'function') { dialog.showModal(); $('#close-dialog').focus(); }
@@ -199,7 +211,8 @@
         <h2 id="dialog-title">${escapeHTML(model.discovery.title)}</h2><p class="dialog-lede">${escapeHTML(model.discovery.summary)}</p>
         ${model.discovery.sections.map(s => `<article><h3>${escapeHTML(s.heading)}</h3><p>${escapeHTML(s.body)}</p></article>`).join('')}
         ${evidenceGallery(model.discovery.gallery)}
-        <div class="dialog-disclaimer">These figures are my own Altium design screenshots and 3D CAD rendering. Timing values discussed in this case study are calculated, unless otherwise noted.</div></div>`;
+        ${projectVideo(model.discovery.video)}
+        <div class="dialog-disclaimer">This gallery includes my original PCB photo, Altium design screenshots, and short hardware video. Timing values discussed in this case study are calculated, unless otherwise noted.</div></div>`;
       dialog.showModal(); $('#close-dialog').focus();
     });
     $('#discovery-action').append(readButton);

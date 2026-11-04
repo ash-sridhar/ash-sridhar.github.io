@@ -69,11 +69,11 @@ window.PORTFOLIO = {
       image: 'switching-clean.png',
       imageAlt: 'Switching network diagram used as a project visual',
       period: 'Summer 2026 · huMannity Medtec',
-      tags: ['Switching Circuits', 'Oscilloscope', 'Circuit Debugging', 'Validation'],
+      tags: ['H-Bridge', 'Oscilloscope', 'Circuit Debugging', 'Validation'],
       metric: '>98%',
       metricLabel: 'timing accuracy',
-      teaser: 'Traced unexpected pulse behavior to a schematic error, corrected the design, and verified greater than 98% timing accuracy with oscilloscope measurements.',
-      challenge: 'During my medical-device engineering internship, I helped validate a switching circuit responsible for producing pulses with the intended timing and polarity. Part of the measured waveform did not agree with what the schematic predicted. The key challenge was to distinguish a real circuit problem from a test setup or measurement error, identify its cause, and establish a repeatable way to verify the correction.',
+      teaser: 'Traced unexpected H-bridge pulse behavior to a schematic error, corrected the design, and verified greater than 98% timing accuracy with oscilloscope measurements.',
+      challenge: 'During my medical-device engineering internship, I helped validate an H-bridge switching circuit responsible for producing pulses with the intended timing and polarity. Part of the measured waveform did not agree with what the schematic predicted. The key challenge was to distinguish a real circuit problem from a test setup or measurement error, identify its cause, and establish a repeatable way to verify the correction.',
       approach: 'I measured the switching waveforms on an oscilloscope and compared their timing and polarity against the expected behavior at specific points in the circuit. When the signals diverged, I checked the instrument setup and traced the switching path back through the schematic rather than assuming a faulty component. That systematic comparison exposed an error in the schematic. After the design was corrected, I repeated the validation procedure and characterized fast current transients. The associated 126-point, 18-configuration characterization procedure also motivated a separate Python oscilloscope automation project, documented in the next case study.',
       outcome: 'After the schematic correction, the switching circuit achieved greater than 98% timing accuracy. I also characterized current spikes on timescales down to approximately 40 ns. The result provided evidence that the corrected switching behavior matched the design intent and that the validation method could capture short transients rather than overlooking them.',
       takeaway: 'This work taught me to use measurements to eliminate possibilities instead of changing things randomly. A waveform mismatch is a clue: understanding the expected circuit behavior, measurement setup, and signal path is what turns that clue into a verified design improvement.'
@@ -153,8 +153,10 @@ window.PORTFOLIO = {
       approach: 'I created the LM555 schematic symbol and footprint using the part datasheet, designed the USB-C power and LED-output sections, and configured the timer in astable mode. With a 13 kΩ timing resistor, 100 kΩ timing resistor, and 2.2 µF capacitor, the ideal calculation predicts roughly 3.1 Hz with about a 53% high-time duty cycle. I laid out the custom logo-shaped two-layer board in Altium and verified the fabricated design through hardware testing.',
       outcome: 'The final PCB was DRC-clean and hardware-verified. The most useful part of the process was learning to connect datasheet details to the physical design decisions that determine whether a board can actually be assembled and operated.',
       takeaway: 'A schematic is only one representation of a product. Library accuracy, footprint orientation, connector details, manufacturing rules, and board-level validation are just as important as the circuit concept.',
+      video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-poster.jpg', caption: 'Short original video of the physical keychain board' },
       gallery: [
         { image: 'keychain-3d-render.webp', alt: 'My Altium 3D rendering of the keychain PCB', caption: '3D PCB model and custom HyTech-inspired board outline' },
+        { image: 'keychain-assembled.webp', alt: 'Photo of the assembled HyTech Racing keychain PCB with USB-C connector, LM555 timer, and surface mount parts', caption: 'Assembled keychain PCB — original project photo' },
         { image: 'keychain-timer-schematic.webp', alt: 'LM555 timer schematic with R1 100 kΩ, R2 13 kΩ and C2 2.2 µF', caption: 'LM555 astable oscillator schematic' },
         { image: 'keychain-usbc-led-schematic.webp', alt: 'USB-C input and six-LED output schematic', caption: 'USB-C power input and LED output circuitry' },
         { image: 'keychain-pcb-top.webp', alt: 'Top-layer routing of the keychain board in Altium', caption: 'Top copper routing and ground plane' },
@@ -209,8 +211,10 @@ window.PORTFOLIO = {
         body: 'This project helped me connect several engineering skills I had previously treated as separate topics: reading datasheets, circuit analysis, selecting practical component values, building a reusable parts library, and navigating PCB layout and verification. I learned that a correct-looking circuit can still cause problems if a footprint is wrong, a connector pin is misunderstood, or the physical routing is overlooked. It also reinforced why I am interested in Circuit Technology and Electronic Devices: even a small blinking keychain depends on real timing behavior, device characteristics, and thoughtful physical implementation. For a future revision, I would capture oscilloscope waveforms of the assembled board and compare measured frequency and duty cycle with the design equations, then document any tolerance-related differences. I can apply the same design-to-test mindset to more complex team electronics throughout my time at Georgia Tech.'
       }
     ],
+    video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-poster.jpg', caption: 'Short original video of the physical keychain board' },
     gallery: [
       { image: 'keychain-3d-render.webp', alt: 'Altium 3D board rendering created for my keychain', caption: '3D design of the keychain PCB' },
+      { image: 'keychain-assembled.webp', alt: 'Photo of the assembled HyTech Racing keychain PCB with USB-C connector, LM555 timer, and surface mount parts', caption: 'Assembled keychain PCB — original project photo' },
       { image: 'keychain-timer-schematic.webp', alt: '555 timer schematic used in the keychain project', caption: 'LM555 oscillator with timing resistor/capacitor values' },
       { image: 'keychain-usbc-led-schematic.webp', alt: 'USB-C power and LED array schematic', caption: 'USB-C power and six 0603 LEDs' },
       { image: 'keychain-pcb-top.webp', alt: 'Routed top PCB layer designed in Altium', caption: 'Top-layer layout and traces' },
