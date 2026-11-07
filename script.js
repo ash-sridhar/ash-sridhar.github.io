@@ -1,227 +1,69 @@
-(() => {
-  'use strict';
-  const model = window.PORTFOLIO;
-  const $ = (selector, root = document) => root.querySelector(selector);
-  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-  const escapeHTML = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const root = document.documentElement;
-  let filter = 'all';
-
-  // Theme choice persists on the device. Initial render prefers system setting.
-  let theme = 'dark';
-  try { theme = localStorage.getItem('portfolio-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'); } catch(e) {}
-  function setTheme(value) {
-    theme = value;
-    root.dataset.theme = value;
-    $('#theme-toggle').setAttribute('aria-label', value === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
-    $('.theme-icon').textContent = value === 'light' ? '☾' : '☼';
-    try { localStorage.setItem('portfolio-theme', value); } catch(e) {}
-  }
-  setTheme(theme);
-  $('#theme-toggle').addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
-
-  const filterContainer = $('#project-filters');
-  const grid = $('#project-grid');
-  const dialog = $('#project-dialog');
-  const dialogContent = $('#dialog-content');
-  let lastTrigger = null;
-  model.filters.forEach(f => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'filter-btn' + (f.id === filter ? ' active' : '');
-    button.textContent = f.label;
-    button.dataset.filter = f.id;
-    button.setAttribute('aria-pressed', String(f.id === filter));
-    button.addEventListener('click', () => {
-      filter = f.id;
-      $$('.filter-btn', filterContainer).forEach(b => {
-        b.classList.toggle('active', b.dataset.filter === filter);
-        b.setAttribute('aria-pressed', String(b.dataset.filter === filter));
-      });
-      renderProjects();
+(function () {
+  var P = window.PORTFOLIO;
+  if (!P) return;
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
-    filterContainer.append(button);
-  });
-
-  function renderProjects() {
-    const shown = model.projects.filter(p => filter === 'all' || p.category === filter);
-    $('#project-count').textContent = `${String(shown.length).padStart(2, '0')} PROJECT${shown.length === 1 ? '' : 'S'}`;
-    grid.innerHTML = '';
-    shown.forEach(p => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'project-card';
-      button.setAttribute('aria-label', `Read case study: ${p.title}`);
-      button.innerHTML = `
-        <div class="project-thumb"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.imageAlt)}" width="600" height="380" loading="lazy">${p.featured ? '<span class="project-featured">FEATURED WORK ↗</span>' : ''}</div>
-        <div class="project-inner"><div class="project-caption"><span>${escapeHTML(p.eyebrow.toUpperCase())}</span><span>${escapeHTML(p.number)} / ${String(model.projects.length).padStart(2, '0')}</span></div>
-        <h3>${escapeHTML(p.title)}</h3><p>${escapeHTML(p.teaser)}</p>
-        <div class="project-tags-small">${p.tags.slice(0,3).map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div>
-        <div class="project-foot"><div><div class="project-metric">${escapeHTML(p.metric)}</div><div class="meta-label">${escapeHTML(p.metricLabel.toUpperCase())}</div></div><span class="project-arrow" aria-hidden="true">↗</span></div></div>`;
-      button.addEventListener('click', () => openProject(p, button));
-      grid.appendChild(button);
-    });
-  }
-
-
-  // Gallery entries are real project screenshots / slides, each linked to its full-size source.
-  function evidenceGallery(gallery) {
-    if(!Array.isArray(gallery) || !gallery.length) return '';
-    return `<section class="project-evidence" aria-label="Original project images"><h3>Design evidence / project gallery</h3>
-      <p class="evidence-intro">Actual CAD screenshots and presentation slides from this project. Select an image to view it full size.</p>
-      <div class="evidence-grid">${gallery.map(g => `<a class="evidence-item" href="${escapeHTML(g.image)}" target="_blank" rel="noopener" aria-label="Open full-size image: ${escapeHTML(g.alt)}"><figure><img src="${escapeHTML(g.image)}" alt="${escapeHTML(g.alt)}" loading="lazy"><figcaption>${escapeHTML(g.caption)}</figcaption></figure></a>`).join('')}</div></section>`;
-  }
-  // Native HTML5 video for an original hardware demo (no external video host).
-  function projectVideo(video) {
-    if(!video?.src) return '';
-    return `<section class="project-video" aria-label="Original project video">
-      <h3>Physical prototype / video</h3>
-      <video controls playsinline preload="metadata" poster="${escapeHTML(video.poster || '')}">
-        <source src="${escapeHTML(video.src)}" type="video/mp4">
-        Your browser cannot play the embedded video. <a href="${escapeHTML(video.src)}">Open the video directly.</a>
-      </video>
-      <p>${escapeHTML(video.caption || 'Original project video')}</p></section>`;
-  }
-  function specsTable(specs) {
-    if(!Array.isArray(specs) || !specs.length) return '';
-    return `<section class="project-specs"><h3>Measured / verified results</h3><table class="specs-table"><tbody>${specs.map(([label,value])=>`<tr><td>${escapeHTML(label)}</td><td>${escapeHTML(value)}</td></tr>`).join('')}</tbody></table></section>`;
-  }
-  function resourceLink(resource){
-    return resource?.url && resource?.label ? `<a class="case-resource" href="${escapeHTML(resource.url)}" target="_blank" rel="noopener">${escapeHTML(resource.label)} ↗</a>` : '';
-  }
-
-  function openProject(p, trigger) {
-    lastTrigger = trigger;
-    $('#dialog-number').textContent = `CASE STUDY / ${p.number}`;
-    const sections = [['The challenge', p.challenge], ['The approach', p.approach], ['The outcome', p.outcome], ['What I learned', p.takeaway]];
-    dialogContent.innerHTML = `<img class="dialog-image" src="${escapeHTML(p.image)}" alt="${escapeHTML(p.imageAlt)}">
-      <div class="dialog-body"><div class="dialog-eyebrow"><span>${escapeHTML(p.eyebrow.toUpperCase())}</span><span>${escapeHTML(p.period.toUpperCase())}</span></div>
-      <h2 id="dialog-title">${escapeHTML(p.title)}</h2><p class="dialog-lede">${escapeHTML(p.teaser)}</p>
-      <div class="dialog-tags">${p.tags.map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div>
-      <div class="dialog-metric"><b>${escapeHTML(p.metric)}</b><span>${escapeHTML(p.metricLabel)}</span></div>
-      ${sections.map(([heading, text]) => `<article><h3>${escapeHTML(heading)}</h3><p>${escapeHTML(text)}</p></article>`).join('')}
-      ${specsTable(p.specs)}
-      ${evidenceGallery(p.gallery)}
-      ${projectVideo(p.video)}
-      ${resourceLink(p.resource)}
-      <div class="dialog-disclaimer">${p.gallery?.length ? 'Gallery images are from the project design files or presentation. Any oscillator values shown are simulated results, not measurements from fabricated silicon.' : 'Project header art is an original conceptual vector illustration. Technical figures are based on my project documentation and resume.'}</div></div>`;
-    if (typeof dialog.showModal === 'function') { dialog.showModal(); $('#close-dialog').focus(); }
-    else { dialog.setAttribute('open', ''); }
-  }
-  $('#close-dialog').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
-  dialog.addEventListener('close', () => { if(lastTrigger) lastTrigger.focus(); });
-  renderProjects();
-  $('#hero-project-count').textContent = String(model.projects.length).padStart(2, '0');
-
-  // Simple SVG instrument — designed as an interactive illustration, not a simulation.
-  const slider = $('#freq-slider');
-  const wave = $('#wave-path');
-  const glow = $('#wave-glow');
-  const refWave = $('#reference-path');
-  let progress = 0;
-  let requestID = null;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function drawSignal() {
-    const frequency = Number(slider.value);
-    $('#freq-value').textContent = frequency;
-    slider.style.background = `linear-gradient(to right,var(--mint) ${(frequency-450)}%,var(--line) ${(frequency-450)}%)`;
-    const cycles = 3.5 + (frequency - 450) / 100 * 1.5;
-    const width = 600, points = 380, d = [];
-    for(let i=0;i<=points;i++) {
-      const x = i / points * width;
-      const phase = (i/points)*cycles*Math.PI*2 + progress;
-      const y = 145 - 92 * Math.tanh(5.4*Math.sin(phase));
-      d.push(`${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`);
-    }
-    const path = d.join(' ');
-    wave.setAttribute('d',path); glow.setAttribute('d',path);
-    const reference = [];
-    for(let i=0;i<=points;i++) {
-      const x=i/points*width;
-      const y=145-52*Math.sin(i/points*cycles*Math.PI*2 + progress);
-      reference.push(`${i ? 'L':'M'}${x.toFixed(1)},${y.toFixed(1)}`);
-    }
-    refWave.setAttribute('d',reference.join(' '));
-  }
-  slider.addEventListener('input', drawSignal);
-  drawSignal();
-  if (!reducedMotion) {
-    let lastTime = 0;
-    const animate = time => {
-      if(time-lastTime > 33) { progress+=.035; drawSignal(); lastTime = time; }
-      requestID = window.requestAnimationFrame(animate);
-    };
-    const observer = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting) { if(!requestID) requestID = window.requestAnimationFrame(animate); }
-      else if(requestID) { window.cancelAnimationFrame(requestID); requestID = null; }
-    });
-    observer.observe($('.instrument-panel'));
-  }
-
-  // Mobile navigation and active section indication.
-  const toggle = $('#menu-toggle');
-  const menu = $('#mobile-nav');
-  function closeMenu() { menu.hidden=true; toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open navigation'); }
-  toggle.addEventListener('click', () => {
-    menu.hidden = !menu.hidden;
-    toggle.setAttribute('aria-expanded',String(!menu.hidden));
-    toggle.setAttribute('aria-label',menu.hidden ? 'Open navigation' : 'Close navigation');
-  });
-  $$('#mobile-nav a').forEach(a => a.addEventListener('click', closeMenu));
-  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !menu.hidden) closeMenu(); });
-  const sections = ['about','work','discovery','experience','roadmap','contact'].map(id => document.getElementById(id));
-  const sectionObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => { if(entry.isIntersecting) $$('.desktop-nav a').forEach(a => a.classList.toggle('active', a.dataset.nav === entry.target.id)); });
-  },{rootMargin:'-20% 0px -65% 0px'});
-  sections.forEach(s => sectionObserver.observe(s));
-  const updateProgress = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    $('#scroll-progress').style.width = `${max ? window.scrollY/max*100 : 0}%`;
   };
-  window.addEventListener('scroll',updateProgress,{passive:true});
-  window.addEventListener('resize',updateProgress);
-  updateProgress();
-  $('#year').textContent = String(new Date().getFullYear());
+  var byId = function (id) { return P.projects.filter(function (p) { return p.id === id; })[0]; };
+  var order = ['vco', 'automation', 'switching', 'mcu', 'ecg', 'firmware'];
+  var list = order.map(byId).filter(Boolean);
 
-  // Content-driven links, so basic updates only require content.js.
-  const person = model.person;
-  $('#email-link').href = 'mailto:' + person.email;
-  $('#linkedin-link').href = person.linkedin;
-  if($('#email-text')) $('#email-text').textContent = person.email;
-  $$('.header-resume,.resume-actions a,.resume-fallback a').forEach(a => {
-    if(a.getAttribute('href')?.includes('Resume.pdf')) a.href = person.resume;
+  $('#project-list').innerHTML = list.map(function (p) {
+    return '<article class="proj"><div><p class="when">' + esc(p.period) + '</p>' +
+      '<h3><button type="button" class="open" data-id="' + p.id + '">' + esc(p.title) + '</button></h3>' +
+      '<p>' + esc(p.teaser) + '</p>' +
+      '<ul class="tags">' + p.tags.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
+      '<p class="metric"><strong>' + esc(p.metric) + '</strong><span>' + esc(p.metricLabel) + '</span></p></article>';
+  }).join('');
+
+  $('#discovery-summary').textContent = P.discovery.summary;
+
+  function gallery(g) {
+    if (!g || !g.length) return '';
+    return '<div class="gallery">' + g.map(function (i) {
+      return '<figure><a href="' + i.image + '" target="_blank" rel="noopener"><img src="' + i.image + '" alt="' + esc(i.alt) + '" loading="lazy"></a>' +
+        '<figcaption>' + esc(i.caption) + '</figcaption></figure>';
+    }).join('') + '</div>';
+  }
+  function video(v) {
+    if (!v) return '';
+    return '<figure class="vid"><video controls preload="none" poster="' + v.poster + '"><source src="' + v.src + '" type="video/mp4"></video>' +
+      '<figcaption>' + esc(v.caption) + '</figcaption></figure>';
+  }
+  function section(h, b) { return '<h3>' + esc(h) + '</h3><p>' + esc(b) + '</p>'; }
+
+  function projectHtml(p) {
+    var specs = p.specs ? '<table><tbody>' + p.specs.map(function (r) {
+      return '<tr><th scope="row">' + esc(r[0]) + '</th><td class="val">' + esc(r[1]) + '</td></tr>';
+    }).join('') + '</tbody></table>' : '';
+    return '<h2 id="dlg-title">' + esc(p.title) + '</h2><p class="when">' + esc(p.period) + '</p>' + specs +
+      section('Challenge', p.challenge) + section('Approach', p.approach) +
+      section('Outcome', p.outcome) + section('Takeaway', p.takeaway) +
+      gallery(p.gallery) + video(p.video) +
+      (p.resource ? '<p><a href="' + p.resource.url + '" target="_blank" rel="noopener">' + esc(p.resource.label) + '</a></p>' : '');
+  }
+  function discoveryHtml(d) {
+    return '<h2 id="dlg-title">' + esc(d.title) + '</h2><p>' + esc(d.summary) + '</p>' +
+      d.sections.map(function (s) { return section(s.heading.replace(/^\d+\s*\/\s*/, ''), s.body); }).join('') +
+      video(d.video) + gallery(d.gallery);
+  }
+
+  var dlg = $('#dlg'), body = $('#dlg-body');
+  function open(html) {
+    body.innerHTML = html;
+    dlg.showModal();
+    dlg.scrollTop = 0;
+    $('#dlg-close').focus();
+  }
+  $('#project-list').addEventListener('click', function (e) {
+    var b = e.target.closest('.open');
+    if (b) open(projectHtml(byId(b.getAttribute('data-id'))));
   });
-  $('#discovery-summary').textContent = model.discovery.summary;
-  $('#discovery-title').textContent = model.discovery.title;
-  $('#discovery-status').lastChild.textContent = ' ' + model.discovery.status.toUpperCase();
-  $('#discovery-image').src = model.discovery.image;
-  $('#discovery-image').alt = model.discovery.imageAlt;
-  if (model.discovery.sections?.length) {
-    $('#discovery-note').textContent = 'Read the full project feature, including the process, decisions, and results.';
-    const readButton = document.createElement('button');
-    readButton.type = 'button';
-    readButton.className = 'discovery-read';
-    readButton.textContent = 'Read complete feature ↗';
-    readButton.addEventListener('click', () => {
-      lastTrigger = readButton;
-      $('#dialog-number').textContent = 'ECE 1100 / DISCOVERY PROJECT';
-      dialogContent.innerHTML = `<img class="dialog-image" src="${escapeHTML(model.discovery.image)}" alt="${escapeHTML(model.discovery.imageAlt)}">
-        <div class="dialog-body"><div class="dialog-eyebrow"><span>DISCOVERY PROJECT</span><span>GEORGIA TECH / ECE 1100</span></div>
-        <h2 id="dialog-title">${escapeHTML(model.discovery.title)}</h2><p class="dialog-lede">${escapeHTML(model.discovery.summary)}</p>
-        ${model.discovery.sections.map(s => `<article><h3>${escapeHTML(s.heading)}</h3><p>${escapeHTML(s.body)}</p></article>`).join('')}
-        ${evidenceGallery(model.discovery.gallery)}
-        ${projectVideo(model.discovery.video)}
-        <div class="dialog-disclaimer">This gallery includes my original PCB photo, Altium design screenshots, and short hardware video. Timing values discussed in this case study are calculated, unless otherwise noted.</div></div>`;
-      dialog.showModal(); $('#close-dialog').focus();
-    });
-    $('#discovery-action').append(readButton);
-  }
-
-  // Respect user motion preferences. Intersection-based reveal is purely decorative.
-  if(!reducedMotion && 'IntersectionObserver' in window){
-    $$('.section-heading,.about-copy,.identity-card,.project-card,.roadmap-card,.timeline-item,.contact-shell').forEach(el => el.classList.add('reveal'));
-    const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('in-view'); revealObserver.unobserve(entry.target); } }),{rootMargin:'0px 0px -50px 0px',threshold:.08});
-    $$('.reveal').forEach(el => revealObserver.observe(el));
-  }
+  $('#discovery-open').addEventListener('click', function () { open(discoveryHtml(P.discovery)); });
+  $('#dlg-close').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('close', function () { body.innerHTML = ''; });
 })();
