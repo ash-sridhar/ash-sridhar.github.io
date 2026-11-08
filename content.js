@@ -143,7 +143,7 @@ window.PORTFOLIO = {
       approach: 'I created the LM555 schematic symbol and footprint using the part datasheet, designed the USB-C power and LED-output sections, and configured the timer in astable mode. With a 13 kΩ timing resistor, 100 kΩ timing resistor, and 2.2 µF capacitor, the ideal calculation predicts roughly 3.1 Hz with about a 53% high-time duty cycle. I laid out the custom logo-shaped two-layer board in Altium and verified the fabricated design through hardware testing.',
       outcome: 'The final PCB was DRC-clean and hardware-verified. The most useful part of the process was learning to connect datasheet details to the physical design decisions that determine whether a board can actually be assembled and operated.',
       takeaway: 'A schematic is only one representation of a product. Library accuracy, footprint orientation, connector details, manufacturing rules, and board-level validation are just as important as the circuit concept.',
-      video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-poster.jpg', caption: 'Short original video of the physical keychain board' },
+      video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-last.jpg', caption: 'Short original video of the physical keychain board' },
       gallery: [
         { image: 'keychain-3d-render.webp', alt: 'My Altium 3D rendering of the keychain PCB', caption: '3D PCB model and custom HyTech-inspired board outline' },
         { image: 'keychain-assembled.webp', alt: 'Photo of the assembled HyTech Racing keychain PCB with USB-C connector, LM555 timer, and surface mount parts', caption: 'Assembled keychain PCB — original project photo' },
@@ -198,7 +198,7 @@ window.PORTFOLIO = {
         body: 'This project helped me connect several engineering skills I had previously treated as separate topics: reading datasheets, circuit analysis, selecting practical component values, building a reusable parts library, and navigating PCB layout and verification. I learned that a correct-looking circuit can still cause problems if a footprint is wrong, a connector pin is misunderstood, or the physical routing is overlooked. It also reinforced why I am interested in Circuit Technology and Electronic Devices: even a small blinking keychain depends on real timing behavior, device characteristics, and thoughtful physical implementation. For a future revision, I would capture oscilloscope waveforms of the assembled board and compare measured frequency and duty cycle with the design equations, then document any tolerance-related differences. I can apply the same design-to-test mindset to more complex team electronics throughout my time at Georgia Tech.'
       }
     ],
-    video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-poster.jpg', caption: 'Short original video of the physical keychain board' },
+    video: { src: 'keychain-demo.mp4', poster: 'keychain-demo-last.jpg', caption: 'Short original video of the physical keychain board' },
     gallery: [
       { image: 'keychain-3d-render.webp', alt: 'Altium 3D board rendering created for my keychain', caption: '3D design of the keychain PCB' },
       { image: 'keychain-assembled.webp', alt: 'Photo of the assembled HyTech Racing keychain PCB with USB-C connector, LM555 timer, and surface mount parts', caption: 'Assembled keychain PCB — original project photo' },
