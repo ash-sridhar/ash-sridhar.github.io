@@ -29,7 +29,7 @@ h2{margin:0 0 14px;font:800 clamp(1.9rem,4.2vw,2.9rem)/1.08 "Bricolage Grotesque
 @media (prefers-reduced-motion:no-preference){.traces path{animation:draw 2.6s cubic-bezier(.3,.7,.2,1) both}.traces path:nth-child(2){animation-delay:.2s}.traces path:nth-child(3){animation-delay:.4s}.traces path:nth-child(4){animation-delay:.6s}.traces path:nth-child(5){animation-delay:.8s}@keyframes draw{from{stroke-dashoffset:2400}}.vias{animation:fade 1s 1.8s both}@keyframes fade{from{opacity:0}}}
 .hero-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}
 .status{display:flex;align-items:center;gap:10px;margin:0 0 20px;font-weight:500;color:var(--mut)}.status i{width:10px;height:10px;border-radius:50%;background:var(--sig);box-shadow:0 0 10px var(--sig)}
-h1{margin:0 0 20px;font:800 clamp(3.2rem,9vw,6.2rem)/.92 "Bricolage Grotesque",Geist,sans-serif;letter-spacing:-.035em;color:var(--silk)}
+h1{margin:0 0 22px;font:700 clamp(3rem,8.4vw,5.9rem)/.98 "Chakra Petch","Bricolage Grotesque",Geist,sans-serif;letter-spacing:-.005em;color:var(--silk)}
 .lead{max-width:31em;margin:0 0 26px;font-size:1.18rem;line-height:1.5;color:var(--mut)}
 .title-block{display:grid;grid-template-columns:6rem 1fr;margin:28px 0 0;border:1px solid var(--mut);font-size:.9rem;background:color-mix(in srgb,var(--mask) 70%,transparent)}
 .title-block dt,.title-block dd{margin:0;padding:6px 12px;border-bottom:1px solid var(--line)}.title-block dt{color:var(--gold);font:500 .78rem "Geist Mono",monospace;text-transform:uppercase;border-right:1px solid var(--line)}.title-block dt:nth-last-of-type(1),.title-block dd:last-of-type{border-bottom:0}

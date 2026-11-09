@@ -130,6 +130,10 @@
     var W = board.clientWidth, H = board.scrollHeight, seed = 23, small = W < 700;
     function rnd() { seed = seed * 16807 % 2147483647; return seed / 2147483647; }
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.innerHTML = ''; bands = [];
+    var bl0 = board.getBoundingClientRect(), rg = d.createRange(), hr = [];
+    rg.selectNodeContents(d.querySelector('.hero h1'));
+    if (rg.getClientRects) hr = [].slice.call(rg.getClientRects()).map(function (r) { var ih = r.height * .12; return { l: r.left - bl0.left - 4, r: r.right - bl0.left + 4, t: r.top - bl0.top + ih, b: r.bottom - bl0.top - ih }; });
+    function inText(x, y) { return hr.some(function (r) { return x > r.l && x < r.r && y > r.t && y < r.b; }); }
     function add(ops, x0, y0, cls, w) {
       var x = x0, y = y0, d = 'M' + x + ' ' + y, vs = [];
       ops.forEach(function (o) {
@@ -140,7 +144,7 @@
       });
       var dim = mk('path', { d: d, 'class': 'dim' }), lt = mk('path', { d: d, 'class': 'lt ' + (cls || '') }), len = lt.getTotalLength();
       dim.style.setProperty('--len', len); if (w) { dim.style.strokeWidth = w; lt.style.strokeWidth = w; } lt.style.strokeDasharray = '0 ' + len;
-      bands.push({ y: y0, len: len, lt: lt, v: vs.map(function (p) { return mk('circle', { cx: p[0], cy: p[1], r: 7 }); }) });
+      bands.push({ y: y0, len: len, lt: lt, v: vs.filter(function (p) { return !inText(p[0], p[1]); }).map(function (p) { return mk('circle', { cx: p[0], cy: p[1], r: 7 }); }) });
     }
     /* Hero: five distinct buses behind the introduction, kept off the lead text and ending at the chip */
     var bl = board.getBoundingClientRect(), rel = function (el) { var r = el.getBoundingClientRect(); return { t: r.top - bl.top, b: r.bottom - bl.top, l: r.left - bl.left, r: r.right - bl.left }; };
