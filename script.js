@@ -7,13 +7,14 @@
 
   /* Power-on intro: a VCO chirps up to lock, the name decodes, then the board powers on */
   var rt = d.documentElement, boot = $('#boot');
-  if (boot && !rt.classList.contains('booted')) {
+  function runBoot() {
+    var boot = $('#boot'); if (!boot) return;
     var bt = $('#boot-trace'), bm = $('#boot-mhz'), led = $('#boot-led'), bn = $('#boot-name'), post = $('#boot-post'), t0 = performance.now(), over = false, nm = 'Ashwath Sridhar', gl = '01ABCDEF#%&/<>=+';
     [['POWER', '1.8 V OK', 250], ['BIAS', 'STABLE', 650], ['VCO', 'LOCKED', 1050], ['DRC', '0 VIOLATIONS', 1450], ['LVS', 'MATCH', 1750]].forEach(function (l) {
       setTimeout(function () { if (!over) post.insertAdjacentHTML('beforeend', '<li><span>' + l[0] + '</span><b>' + l[1] + '</b></li>'); }, l[2]);
     });
     var finish = function () {
-      if (over) return; over = true; boot.classList.add('go'); rt.classList.add('booted');
+      if (over) return; over = true; removeEventListener('keydown', finish); boot.classList.add('go'); rt.classList.add('booted');
       try { sessionStorage.setItem('booted', '1'); } catch (x) {}
       setTimeout(function () { boot.remove(); }, 1100);
     };
@@ -33,6 +34,18 @@
     };
     requestAnimationFrame(frame);
   }
+  var bootTpl = boot ? boot.outerHTML : null;
+  if (boot && !rt.classList.contains('booted')) runBoot();
+  function cycle() {
+    if (!bootTpl || still || (typeof dlg !== 'undefined' && dlg && dlg.open)) return;
+    var old = $('#boot'); if (old) old.remove();
+    scrollTo(0, 0); rt.classList.remove('booted');
+    d.body.insertAdjacentHTML('afterbegin', bootTpl); runBoot();
+  }
+  $('#cycle').addEventListener('click', cycle);
+  d.addEventListener('keydown', function (e) {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA/.test((d.activeElement || {}).tagName || '')) cycle();
+  });
 
   /* Oscilloscope: slider sweeps the 450 to 550 MHz design band (illustrative) */
   var path = $('#trace'), slider = $('#freq'), f = 500, ph = 0;
@@ -59,6 +72,50 @@
     return '<article class="card" data-id="' + p.id + '" data-ref="' + refs[p.id] + '" data-m="' + esc(p.metric) + '" data-l="' + esc(p.metricLabel) + '"><p class="when">' + esc(p.period) + '</p><h3><button type="button" class="open" data-id="' + p.id + '">' + esc(p.title) + '</button></h3><p>' + esc(p.teaser) + '</p><ul class="tags">' + p.tags.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul><p class="m"><strong>' + esc(p.metric) + '</strong><span>' + esc(p.metricLabel) + '</span></p></article>';
   }).join('');
   $('#disc-sum').textContent = P.discovery.summary;
+
+  /* Metrics count up as each project scrolls into view */
+  function count(el) {
+    var txt = el.textContent, t1 = performance.now();
+    function step(now) {
+      var p = Math.min(1, (now - t1) / 900), ez = 1 - Math.pow(1 - p, 3);
+      el.textContent = txt.replace(/\d+(\.\d+)?/g, function (m) { return (parseFloat(m) * ez).toFixed((m.split('.')[1] || '').length); });
+      if (p < 1) requestAnimationFrame(step); else el.textContent = txt;
+    }
+    requestAnimationFrame(step);
+  }
+  if (!still && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { io.unobserve(en.target); count(en.target); } }); }, { threshold: .6 });
+    d.querySelectorAll('.card .m strong').forEach(function (n) { io.observe(n); });
+  }
+
+  /* Keychain inspector: probe the parts on the photo of the assembled board */
+  var SCH = { usb: ['USB-C power and LED schematic', 'keychain-usbc-led-schematic.webp'], t555: ['LM555 timer schematic', 'keychain-timer-schematic.webp'] };
+  var parts = [
+    { n: 'J1 · USB-C connector', x: 52, y: 29.5, t: 'Power input. The board takes 5 V from a USB-C port.', l: SCH.usb },
+    { n: 'U1 · LM555 timer', x: 73.6, y: 54.4, t: 'Runs as an astable oscillator that sets how fast the LED array blinks, using external timing resistors and a capacitor.', l: SCH.t555 },
+    { n: 'R1, R2, R5 · resistors', x: 25.7, y: 27.5, t: 'Surface-mount resistors in the timing and LED circuitry. Exact values are on the schematics.', l: SCH.t555 },
+    { n: 'R3, R4, C2 · passives', x: 72.5, y: 72.4, t: 'Surface-mount resistors and a capacitor next to the timer. Exact values are on the schematics.', l: SCH.t555 },
+    { n: 'C1, C4 · capacitors', x: 51.6, y: 51.4, t: 'Capacitors placed near the USB-C input. Exact values are on the schematic.', l: SCH.usb },
+    { n: 'Keyring hole', x: 76.2, y: 31.7, t: 'A plated hole so the board can hang on a keychain.' },
+    { n: 'Silkscreen', x: 24.7, y: 79, t: 'The white text layer: team name and tagline printed on the board.' }
+  ];
+  var ins = $('#inspect'), callout = $('#callout');
+  function inspect(i) {
+    var p = parts[i];
+    callout.innerHTML = '<small>Part ' + (i + 1) + ' of ' + parts.length + '</small><h3>' + esc(p.n) + '</h3><p>' + esc(p.t) + '</p>' + (p.l ? '<a href="' + p.l[1] + '" target="_blank" rel="noopener noreferrer">' + esc(p.l[0]) + '</a>' : '');
+    ins.querySelectorAll('.hs').forEach(function (b, k) { b.classList.toggle('on', k === i); });
+  }
+  parts.forEach(function (p, i) {
+    var b = d.createElement('button'); b.type = 'button'; b.className = 'hs'; b.style.left = p.x + '%'; b.style.top = p.y + '%'; b.setAttribute('aria-label', p.n);
+    b.addEventListener('click', function () { inspect(i); }); b.addEventListener('mouseenter', function () { inspect(i); }); b.addEventListener('focus', function () { inspect(i); });
+    ins.appendChild(b);
+  });
+  callout.innerHTML = '<small>Inspector</small><h3>Probe the board</h3><p>Hover or tap a ring on the photo to identify a part and see where it appears in the schematics.</p>';
+
+  /* Layer viewer */
+  var lpn = $('#layers-panel'), lbn = $('#layers-btn');
+  lbn.addEventListener('click', function () { var o = lpn.hidden; lpn.hidden = !o; lbn.setAttribute('aria-expanded', o); });
+  lpn.addEventListener('change', function (e) { rt.classList.toggle('no-' + e.target.dataset.layer, !e.target.checked); });
 
   /* Probe tooltip */
   var probe = $('#probe');
@@ -149,6 +206,12 @@
       b.lt.style.strokeDasharray = (fr * b.len) + ' ' + b.len;
       b.v.forEach(function (c, n) { c.classList.toggle('on', fr > (n + 1) / (b.v.length + 1)); });
     });
+    var tl = d.querySelector('.tps');
+    if (tl) {
+      var tr = tl.getBoundingClientRect();
+      tl.style.setProperty('--rp', still ? 1 : Math.max(0, Math.min(1, (vh * .62 - tr.top - 28) / Math.max(1, tr.height - 56))));
+      tl.querySelectorAll('li').forEach(function (li) { li.classList.toggle('on', still || li.getBoundingClientRect().top + 28 < vh * .62); });
+    }
   }
   addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(update); } }, { passive: true });
   addEventListener('resize', measure); addEventListener('load', measure);
@@ -162,14 +225,26 @@
   function vid(v) { return v ? '<figure class="vid"><video controls preload="none" poster="' + v.poster + '"><source src="' + v.src + '" type="video/mp4"></video><figcaption>' + esc(v.caption) + '</figcaption></figure>' : ''; }
   function proj(p) {
     var t = p.specs ? '<table><tbody>' + p.specs.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
-    return '<h2 id="dlg-title">' + esc(p.title) + '</h2><p class="when">' + esc(p.period) + '</p>' + t + sec('Challenge', p.challenge) + sec('Approach', p.approach) + sec('Outcome', p.outcome) + sec('Takeaway', p.takeaway) + gal(p.gallery) + vid(p.video) + (p.resource ? '<p><a href="' + p.resource.url + '" target="_blank" rel="noopener">' + esc(p.resource.label) + '</a></p>' : '');
+    var g = p.gallery || [], top = p.id === 'vco' ? g.filter(function (i) { return i.image.indexOf('temp-graph') > -1; }) : [], rest = g.filter(function (i) { return top.indexOf(i) < 0; });
+    var badges = p.id === 'vco' ? '<ul class="badges"><li>DRC: 0 violations</li><li>LVS: match</li><li>Corners: tt, ff, ss</li><li>Sweep: 0 to 70 °C</li></ul>' : '';
+    return '<h2 id="dlg-title">' + esc(p.title) + '</h2><p class="when">' + esc(p.period) + '</p>' + badges + gal(top) + t + sec('Challenge', p.challenge) + sec('Approach', p.approach) + sec('Outcome', p.outcome) + sec('Takeaway', p.takeaway) + gal(rest) + vid(p.video) + (p.resource ? '<p><a href="' + p.resource.url + '" target="_blank" rel="noopener noreferrer">' + esc(p.resource.label) + '</a></p>' : '');
   }
   function disc(x) { return '<h2 id="dlg-title">' + esc(x.title) + '</h2><p>' + esc(x.summary) + '</p>' + x.sections.map(function (s) { return sec(s.heading.replace(/^\d+\s*\/\s*/, ''), s.body); }).join('') + vid(x.video) + gal(x.gallery); }
   var dlg = $('#dlg');
-  function show(h) { probe.classList.remove('on'); $('#dbody').innerHTML = h; dlg.showModal(); dlg.scrollTop = 0; $('#dlg-x').focus(); }
-  grid.addEventListener('click', function (e) { var b = e.target.closest('.open'); if (b) show(proj(byId(b.dataset.id))); });
-  $('#disc-open').addEventListener('click', function () { show(disc(P.discovery)); });
-  $('#dlg-x').addEventListener('click', function () { dlg.close(); });
-  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
-  dlg.addEventListener('close', function () { $('#dbody').innerHTML = ''; });
+  function show(h, from) {
+    probe.classList.remove('on'); $('#dbody').innerHTML = h; dlg.classList.remove('out'); dlg.showModal(); dlg.scrollTop = 0; rt.classList.add('zoomed');
+    if (from) { var f = from.getBoundingClientRect(), r = dlg.getBoundingClientRect(); dlg.style.transformOrigin = (f.left + f.width / 2 - r.left) + 'px ' + (f.top + f.height / 2 - r.top) + 'px'; }
+    $('#dlg-x').focus();
+  }
+  function closeDlg() {
+    if (!dlg.open || dlg.classList.contains('out')) return;
+    if (still) { dlg.close(); return; }
+    dlg.classList.add('out'); setTimeout(function () { dlg.close(); }, 230);
+  }
+  grid.addEventListener('click', function (e) { var b = e.target.closest('.open'); if (b) show(proj(byId(b.dataset.id)), b.closest('.card')); });
+  $('#disc-open').addEventListener('click', function () { show(disc(P.discovery), this); });
+  $('#dlg-x').addEventListener('click', closeDlg);
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(); });
+  dlg.addEventListener('cancel', function (e) { e.preventDefault(); closeDlg(); });
+  dlg.addEventListener('close', function () { $('#dbody').innerHTML = ''; dlg.classList.remove('out'); rt.classList.remove('zoomed'); });
 })();

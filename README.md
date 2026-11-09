@@ -10,3 +10,5 @@ Where to edit
 - `Ashwath_Sridhar_Resume.pdf`: replace this file (keep the name) to update the resume
 
 Add `?intro` to the URL to replay the power-on intro; it otherwise plays once per browser session.
+
+Features: keychain inspector (hotspot list in `script.js`), Layers viewer (bottom-left), project dialogs that zoom from the card, press P or use the footer button to power-cycle the board.
