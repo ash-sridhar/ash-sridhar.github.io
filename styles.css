@@ -134,20 +134,13 @@ html.booted .hero h1{animation:tight 1.1s .35s both cubic-bezier(.2,.8,.2,1)}
 
 .hero .status{position:relative;top:-20px}
 
-/* Keychain inspector */
-.inspect-wrap{display:grid;gap:14px}.inspect{position:relative}
-.hs{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;padding:0;border-radius:50%;border:4px solid var(--gold);background:rgba(11,42,28,.5);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
-.hs:hover,.hs.on{transform:scale(1.18);border-color:var(--sig);box-shadow:0 0 16px var(--sig)}
-@media (prefers-reduced-motion:no-preference){.hs::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--gold);opacity:0;animation:ping 2.4s infinite}@keyframes ping{0%{transform:scale(.6);opacity:.8}100%{transform:scale(1.5);opacity:0}}}
-.callout{min-height:8.5em;padding:18px 20px;border:1px dashed var(--mut);border-radius:6px;background:color-mix(in srgb,var(--mask) 75%,transparent)}
-.callout small{color:var(--gold);font:500 .74rem "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.06em}.callout h3{margin:4px 0 6px}.callout p{margin:0 0 8px;color:var(--mut);font-size:.95rem}
 /* Layer viewer */
 .layers{position:fixed;left:16px;bottom:16px;z-index:45;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.layers>.btn{background:var(--board)}
 #layers-panel{display:grid;gap:8px;padding:12px 14px;border:1px solid var(--mut);border-radius:6px;background:#17171b;color:#f2f2f2;font:500 .85rem "Geist Mono",monospace}#layers-panel[hidden]{display:none}
 #layers-panel label{display:flex;align-items:center;gap:10px;cursor:pointer}#layers-panel input{accent-color:var(--gold)}
 html.no-copper .bgtr,html.no-copper .rail,html.no-copper .sec::after,html.no-copper .card::after,html.no-copper .conn::after,html.no-copper .scope::after,html.no-copper .tps::before,html.no-copper .tps::after,html.no-copper .tps li::after{opacity:0}
 html.no-silk .part::before,html.no-silk .card::before,html.no-silk .tps span,html.no-silk .pins small,html.no-silk .ends{opacity:0}
-html.no-mask{--board:#3b3524;--mask:#4a422d;--mask2:#574d35;--cu:#e0a24a;--line:#6a5d3f}
+html.no-mask{--board:#d9c88f;--mask:#e6d9a8;--mask2:#c9b779;--cu:#d9822b;--line:#a8955a;--silk:#2b2410;--mut:#5a4d2c;--gold:#7a4f00;--sig:#0b5e3c;--deep:#efe6c4;--on-gold:#fff6dc;--on-sig:#ffffff}
 html.no-drill .bgtr circle,html.no-drill .sec::before,html.no-drill .tps li::before{opacity:0}
 /* VCO verification badges */
 .badges{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;padding:0;list-style:none}.badges li{padding:3px 12px;border:1px solid var(--gold);border-radius:99px;color:var(--gold);font:500 .8rem "Geist Mono",monospace}.badges li::before{content:"\2713  ";color:var(--sig)}

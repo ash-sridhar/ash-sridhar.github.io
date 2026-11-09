@@ -13,7 +13,8 @@
     [['POWER', '1.8 V OK', 250], ['BIAS', 'STABLE', 650], ['VCO', 'LOCKED', 1050], ['DRC', '0 VIOLATIONS', 1450], ['LVS', 'MATCH', 1750]].forEach(function (l) {
       setTimeout(function () { if (!over) post.insertAdjacentHTML('beforeend', '<li><span>' + l[0] + '</span><b>' + l[1] + '</b></li>'); }, l[2]);
     });
-    var finish = function () {
+    var finish = function (ev) {
+      if (ev && ev.type === 'keydown' && (ev.repeat || ev.key === 'p' || ev.key === 'P')) return;
       if (over) return; over = true; removeEventListener('keydown', finish); boot.classList.add('go'); rt.classList.add('booted');
       try { sessionStorage.setItem('booted', '1'); } catch (x) {}
       setTimeout(function () { boot.remove(); }, 1100);
@@ -40,7 +41,7 @@
     if (!bootTpl || still || (typeof dlg !== 'undefined' && dlg && dlg.open)) return;
     var old = $('#boot'); if (old) old.remove();
     scrollTo(0, 0); rt.classList.remove('booted');
-    d.body.insertAdjacentHTML('afterbegin', bootTpl); runBoot();
+    d.body.insertAdjacentHTML('afterbegin', bootTpl); setTimeout(runBoot, 0);
   }
   $('#cycle').addEventListener('click', cycle);
   d.addEventListener('keydown', function (e) {
@@ -87,30 +88,6 @@
     var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { io.unobserve(en.target); count(en.target); } }); }, { threshold: .6 });
     d.querySelectorAll('.card .m strong').forEach(function (n) { io.observe(n); });
   }
-
-  /* Keychain inspector: probe the parts on the photo of the assembled board */
-  var SCH = { usb: ['USB-C power and LED schematic', 'keychain-usbc-led-schematic.webp'], t555: ['LM555 timer schematic', 'keychain-timer-schematic.webp'] };
-  var parts = [
-    { n: 'J1 · USB-C connector', x: 52, y: 29.5, t: 'Power input. The board takes 5 V from a USB-C port.', l: SCH.usb },
-    { n: 'U1 · LM555 timer', x: 73.6, y: 54.4, t: 'Runs as an astable oscillator that sets how fast the LED array blinks, using external timing resistors and a capacitor.', l: SCH.t555 },
-    { n: 'R1, R2, R5 · resistors', x: 25.7, y: 27.5, t: 'Surface-mount resistors in the timing and LED circuitry. Exact values are on the schematics.', l: SCH.t555 },
-    { n: 'R3, R4, C2 · passives', x: 72.5, y: 72.4, t: 'Surface-mount resistors and a capacitor next to the timer. Exact values are on the schematics.', l: SCH.t555 },
-    { n: 'C1, C4 · capacitors', x: 51.6, y: 51.4, t: 'Capacitors placed near the USB-C input. Exact values are on the schematic.', l: SCH.usb },
-    { n: 'Keyring hole', x: 76.2, y: 31.7, t: 'A plated hole so the board can hang on a keychain.' },
-    { n: 'Silkscreen', x: 24.7, y: 79, t: 'The white text layer: team name and tagline printed on the board.' }
-  ];
-  var ins = $('#inspect'), callout = $('#callout');
-  function inspect(i) {
-    var p = parts[i];
-    callout.innerHTML = '<small>Part ' + (i + 1) + ' of ' + parts.length + '</small><h3>' + esc(p.n) + '</h3><p>' + esc(p.t) + '</p>' + (p.l ? '<a href="' + p.l[1] + '" target="_blank" rel="noopener noreferrer">' + esc(p.l[0]) + '</a>' : '');
-    ins.querySelectorAll('.hs').forEach(function (b, k) { b.classList.toggle('on', k === i); });
-  }
-  parts.forEach(function (p, i) {
-    var b = d.createElement('button'); b.type = 'button'; b.className = 'hs'; b.style.left = p.x + '%'; b.style.top = p.y + '%'; b.setAttribute('aria-label', p.n);
-    b.addEventListener('click', function () { inspect(i); }); b.addEventListener('mouseenter', function () { inspect(i); }); b.addEventListener('focus', function () { inspect(i); });
-    ins.appendChild(b);
-  });
-  callout.innerHTML = '<small>Inspector</small><h3>Probe the board</h3><p>Hover or tap a ring on the photo to identify a part and see where it appears in the schematics.</p>';
 
   /* Layer viewer */
   var lpn = $('#layers-panel'), lbn = $('#layers-btn');
@@ -225,9 +202,9 @@
   function vid(v) { return v ? '<figure class="vid"><video controls preload="none" poster="' + v.poster + '"><source src="' + v.src + '" type="video/mp4"></video><figcaption>' + esc(v.caption) + '</figcaption></figure>' : ''; }
   function proj(p) {
     var t = p.specs ? '<table><tbody>' + p.specs.map(function (r) { return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
-    var g = p.gallery || [], top = p.id === 'vco' ? g.filter(function (i) { return i.image.indexOf('temp-graph') > -1; }) : [], rest = g.filter(function (i) { return top.indexOf(i) < 0; });
+    var g = p.gallery || [];
     var badges = p.id === 'vco' ? '<ul class="badges"><li>DRC: 0 violations</li><li>LVS: match</li><li>Corners: tt, ff, ss</li><li>Sweep: 0 to 70 °C</li></ul>' : '';
-    return '<h2 id="dlg-title">' + esc(p.title) + '</h2><p class="when">' + esc(p.period) + '</p>' + badges + gal(top) + t + sec('Challenge', p.challenge) + sec('Approach', p.approach) + sec('Outcome', p.outcome) + sec('Takeaway', p.takeaway) + gal(rest) + vid(p.video) + (p.resource ? '<p><a href="' + p.resource.url + '" target="_blank" rel="noopener noreferrer">' + esc(p.resource.label) + '</a></p>' : '');
+    return '<h2 id="dlg-title">' + esc(p.title) + '</h2><p class="when">' + esc(p.period) + '</p>' + badges + t + sec('Challenge', p.challenge) + sec('Approach', p.approach) + sec('Outcome', p.outcome) + sec('Takeaway', p.takeaway) + gal(g) + vid(p.video) + (p.resource ? '<p><a href="' + p.resource.url + '" target="_blank" rel="noopener noreferrer">' + esc(p.resource.label) + '</a></p>' : '');
   }
   function disc(x) { return '<h2 id="dlg-title">' + esc(x.title) + '</h2><p>' + esc(x.summary) + '</p>' + x.sections.map(function (s) { return sec(s.heading.replace(/^\d+\s*\/\s*/, ''), s.body); }).join('') + vid(x.video) + gal(x.gallery); }
   var dlg = $('#dlg');
